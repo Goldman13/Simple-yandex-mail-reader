@@ -1,0 +1,10 @@
+<resources>
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">#159245</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+
+<!--        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+<!--        <item name="colorAccent">@color/colorAccent</item>-->
+    </style>
+    <style name="AppToolbar" parent="Widget.MaterialComponents.Toolbar.Primary"></style>
+</resources>
