@@ -1,7 +1,7 @@
 package com.dimnowgood.bestapp.di
 
 import androidx.room.Room
-import com.dimnowgood.bestapp.LiteMailReader
+import com.dimnowgood.bestapp.LiteMailReaderApp
 import com.dimnowgood.bestapp.data.db.MailBodyDao
 import com.dimnowgood.bestapp.data.db.MailDao
 import com.dimnowgood.bestapp.data.db.MailDataBase
@@ -14,7 +14,7 @@ class DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideDatabase(app: LiteMailReader): MailDataBase {
+    fun provideDatabase(app: LiteMailReaderApp): MailDataBase {
         return Room.databaseBuilder(
             app.applicationContext,
             MailDataBase::class.java,

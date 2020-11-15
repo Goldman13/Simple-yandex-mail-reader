@@ -1,19 +1,19 @@
 package com.dimnowgood.bestapp.util
 
-data class Result<out T>(val status:Status, val data:T?, val message:String) {
+data class Result<T>(val status:Status, val data:T?, val message:String) {
 
     companion object{
 
-        fun<T> success(data:T?):Result<T>{
-            return Result(Status.SUCCESS,data,"")
+        fun<T> success(data:T?, msg:String):Result<T>{
+            return Result(Status.SUCCESS,data,msg)
         }
 
-        fun<T> error(msg:String, data:T?):Result<T>{
+        fun<T> error(data:T?, msg:String):Result<T>{
             return Result(Status.ERROR, data, msg)
         }
 
-        fun<T> loading(msg:String, data:T?):Result<T>{
-            return Result(Status.LOADING, data, "")
+        fun<T> loading(data:T?, msg:String):Result<T>{
+            return Result(Status.LOADING, data, msg)
         }
 
     }

@@ -1,6 +1,7 @@
 package com.dimnowgood.bestapp.domain.repository
 
 import androidx.lifecycle.LiveData
+import androidx.room.Transaction
 import com.dimnowgood.bestapp.data.data_source.YandexMailServerDataSource
 import com.dimnowgood.bestapp.data.db.MailBodyDao
 import com.dimnowgood.bestapp.data.db.MailBodyEntity
@@ -15,16 +16,24 @@ import javax.inject.Singleton
 class Repository @Inject constructor(
     private val remoteDataSource: YandexMailServerDataSource,
     private val mailDao: MailDao,
-    private val mailBodyDao: MailBodyDao
-) {
-    suspend fun queryRemoteDataSource(): Result<*> {
-        return remoteDataSource.queryMails { list ->
+    private val mailBodyDao: MailBodyDao){
+
+   suspend fun updateLocalDb(mailItem: MailEntity){
+        mailDao.update(mailItem)
+   }
+
+   suspend fun deleteLocalDb(list: List<MailEntity>){
+        mailDao.complexDelete(list)
+   }
+
+    suspend fun queryRemoteDataSource(login:String): Result<*> {
+        return remoteDataSource.queryMails(login) { list ->
             if(!list.isNullOrEmpty()) addMailsLocalDb(list)
         }
     }
 
-    suspend fun loadMailBody(id: Long):Result<*>{
-        return remoteDataSource.loadMailBody(id){ mailBody ->
+    suspend fun loadMailBody(id: Long, login:String):Result<*>{
+        return remoteDataSource.loadMailBody(id,login){ mailBody ->
             addMailBodyLocalDb(mailBody)
         }
     }
@@ -41,11 +50,11 @@ class Repository @Inject constructor(
         mailBodyDao.insert(body)
     }
 
-    fun queryAllMailsFromLocalDb(): LiveData<List<MailEntity>> {
-        return mailDao.queryAllMails()
+    fun queryAllMailsFromLocalDb(login:String): LiveData<List<MailEntity>> {
+        return mailDao.queryAllMails(login)
     }
 
-    suspend fun queryBodyMailFromLocalDb(id: Long):MailBodyEntity?{
-        return mailBodyDao.queryContent(id)
+    suspend fun queryBodyMailFromLocalDb(id: Long, login:String):MailBodyEntity?{
+        return mailBodyDao.queryContent(id, login)
     }
 }

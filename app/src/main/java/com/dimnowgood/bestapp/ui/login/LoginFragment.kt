@@ -39,11 +39,16 @@ class LoginFragment:DaggerFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        //(activity as AppCompatActivity).supportActionBar?.hide()
+
         binding.viewModel = loginViewModel
 
         binding.buttonEnter.setOnClickListener {
             val hasError = isEmptyData()
+            if(!loginViewModel.hasConnect()){
+                Snackbar.make(it,getString(R.string.connect_error),Snackbar.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
             if(!hasError){
                 loginViewModel.check(mutableListOf(
                     binding.textLogin.text.toString(),
@@ -56,7 +61,7 @@ class LoginFragment:DaggerFragment() {
             when(it.status){
                 Status.LOADING -> {}
                 Status.ERROR -> {
-                    Snackbar.make(view,it.message,Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(binding.root,it.message,Snackbar.LENGTH_LONG).show()
                 }
                 Status.SUCCESS -> {
                     navigateToMailList()
@@ -66,12 +71,11 @@ class LoginFragment:DaggerFragment() {
     }
 
     private fun navigateToMailList(){
-       activity?.let{
-         val intent = it.intent
-           it.finish()
-           it.startActivity(intent)
-       }
-        //findNavController().navigate(R.id.action_loginFragment_to_mailListFragment)
+        activity?.let{
+            val intent = it.intent
+            it.finish()
+            it.startActivity(intent)
+        }
     }
 
     private fun isEmptyData():Boolean{

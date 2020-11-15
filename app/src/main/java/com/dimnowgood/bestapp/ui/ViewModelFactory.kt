@@ -1,4 +1,4 @@
-package com.dimnowgood.bestapp
+package com.dimnowgood.bestapp.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

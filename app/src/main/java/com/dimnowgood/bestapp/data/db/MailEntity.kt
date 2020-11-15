@@ -8,19 +8,23 @@ import java.time.LocalDateTime
 import java.util.*
 
 @Parcelize
-@Entity
+@Entity(primaryKeys = arrayOf("id", "login"))
 data class MailEntity(
-    @PrimaryKey val id: Long,
+    val id: Long,
+    val login:String,
     val title: String?,
     val from: String?,
-    val data_receiving: Date
+    val data_receiving: Date,
+    var newMail: Boolean
 ):Parcelable{
     @Ignore
     constructor(mail:MailMessage):this(
         id = mail.id,
+        login = mail.login,
         title = mail.title,
         from = mail.from,
-        data_receiving = mail.data_receiving
+        data_receiving = mail.data_receiving,
+        newMail = true
     )
 }
 

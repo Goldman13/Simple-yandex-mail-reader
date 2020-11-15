@@ -2,8 +2,8 @@ package com.dimnowgood.bestapp.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.dimnowgood.bestapp.MailDataSource
-import com.dimnowgood.bestapp.ViewModelFactory
+import com.dimnowgood.bestapp.data.data_source.MailDataSource
+import com.dimnowgood.bestapp.ui.ViewModelFactory
 import com.dimnowgood.bestapp.data.data_source.YandexMailServerDataSource
 import com.dimnowgood.bestapp.ui.listmails.MailListViewModel
 import com.dimnowgood.bestapp.ui.login.LoginViewModel

@@ -5,9 +5,10 @@ import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import androidx.preference.PreferenceManager
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import com.dimnowgood.bestapp.LiteMailReader
+import com.dimnowgood.bestapp.LiteMailReaderApp
 import com.dimnowgood.bestapp.util.LOGIN
 import com.dimnowgood.bestapp.util.PASSWORD
 import dagger.Module
@@ -24,14 +25,14 @@ class MailModule {
 
     @Singleton
     @Provides
-    fun provideConnectivityManager(app:LiteMailReader): ConnectivityManager{
+    fun provide_ConnectivityManager(app:LiteMailReaderApp): ConnectivityManager{
         return app.applicationContext
             .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     }
 
     @Singleton
     @Provides
-    fun provideNetworkRequest(): NetworkRequest{
+    fun provide_NetworkRequest(): NetworkRequest{
         return NetworkRequest.Builder()
             .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
             .build()
@@ -40,7 +41,7 @@ class MailModule {
     @Singleton
     @Provides
     @Named("Encrypt")
-    fun encryptSharedPref(app: LiteMailReader): SharedPreferences{
+    fun provide_encryptSharedPref(app: LiteMailReaderApp): SharedPreferences{
         return EncryptedSharedPreferences.create(
             app,
             "auth_pref",
@@ -52,7 +53,14 @@ class MailModule {
 
     @Singleton
     @Provides
-    fun provider_YandexMailSession(@Named("Encrypt") sharPref: SharedPreferences): Session {
+    @Named("Settings")
+    fun provide_settingSharedPref(app: LiteMailReaderApp): SharedPreferences{
+       return PreferenceManager.getDefaultSharedPreferences(app.applicationContext)
+    }
+
+    @Singleton
+    @Provides
+    fun provide_YandexMailSession(@Named("Encrypt") sharPref: SharedPreferences): Session {
 
         val props = Properties().apply {
             setProperty("mail.imaps.host", "imap.yandex.ru")

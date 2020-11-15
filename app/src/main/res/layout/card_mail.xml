@@ -11,6 +11,13 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent">
 
+    <ImageView
+        android:id="@+id/checkItem"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/ic_baseline_check_24"
+        android:visibility="invisible"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -55,4 +62,5 @@
             android:visibility="gone"/>
 
     </LinearLayout>
+
 </com.google.android.material.card.MaterialCardView>

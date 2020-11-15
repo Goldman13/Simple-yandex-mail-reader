@@ -9,14 +9,8 @@
         android:title="CheckForUpdates"
         app:showAsAction="always" />
     <item
-        android:id="@+id/item_search"
-        android:icon="@drawable/ic_search_white_24dp"
-        android:title="Search"
-        app:actionViewClass="android.widget.SearchView"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/settings"
         android:icon="@drawable/settings"
         android:title="settings"
-        app:showAsAction="always" />
+        app:showAsAction="collapseActionView" />
 </menu>

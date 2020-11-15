@@ -20,6 +20,7 @@ import com.dimnowgood.bestapp.util.Status
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.*
+import timber.log.Timber
 import javax.inject.Inject
 
 class MailListFragment : DaggerFragment() {
@@ -30,7 +31,6 @@ class MailListFragment : DaggerFragment() {
     }
 
     private lateinit var binding: FragmentMailListBinding
-    private var land_orient = false
     private var commonList = emptyList<MailEntity>()
 
     override fun onCreateView(
@@ -44,30 +44,22 @@ class MailListFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
         binding.viewModel = mailViewModel
-        val mailAdapter = MailListAdapter(commonList, R.layout.card_mail){
-            mailViewModel.getBodyMail(it)
-        }
+        val mailAdapter = MailListAdapter(
+            commonList,
+            requireContext().applicationContext,
+            {mailViewModel.getBodyMail(it)},
+            {mailViewModel.updateMailDb(it)},
+            {mailViewModel.delete(it)}
+        )
 
-        land_orient = getResources().configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-
-//        if(land_orient){
-//            viewPager = view.findViewById<ViewPager2>(R.id.viewPager)
-//            viewPager?.adapter = mailAdapter
-//        }
-
-//       if( == Configuration.ORIENTATION_LANDSCAPE){
-//           view.layoutParams = view.layoutParams.apply {
-//            height = MATCH_PARENT
-//        }
-//       }
 
         binding.recyclerViewMail.apply {
             adapter = mailAdapter
-            //addItemDecoration(MailListDivider(ContextCompat.getColor(requireContext(), R.color.backGroundlistItem)))
         }
 
-        mailViewModel.getEmailsUseCase.queryMails().observe(viewLifecycleOwner,{
+        mailViewModel.mailListDb.observe(viewLifecycleOwner,{
 
             commonList = it
 
@@ -88,14 +80,17 @@ class MailListFragment : DaggerFragment() {
                 Status.ERROR -> {
                     Snackbar.make(view,it.message,Snackbar.LENGTH_LONG).show()
                 }
-                Status.SUCCESS -> {}
+                Status.SUCCESS -> {
+                    if(it.message.isNotEmpty())
+                        Snackbar.make(view,it.message,Snackbar.LENGTH_LONG).show()
+                }
             }
         })
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.mail_list_menu, menu)
+        inflater.inflate(R.menu.common_menu, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -105,49 +100,24 @@ class MailListFragment : DaggerFragment() {
                 findNavController().navigate(R.id.action_mailListFragment_to_settingsFragment)
                 true
             }
+            R.id.logout ->{
+                CoroutineScope(Dispatchers.Default).launch{
+                    mailViewModel.backToLoginView()
+                    activity?.let{
+                        val intent = it.intent
+                        it.finish()
+                        it.startActivity(intent)
+                    }
+                }
+                true
+            }
             R.id.item_check -> {
+                if(!mailViewModel.hasConnect())
+                    Snackbar.make(binding.root,getString(R.string.connect_error),Snackbar.LENGTH_LONG).show()
                 mailViewModel.getNewMails()
                 true
             }
             else -> false
         }
     }
-}
-
-class MailListDivider(colorRes:Int): RecyclerView.ItemDecoration() {
-
-    private val dividerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = colorRes
-        style = Paint.Style.STROKE
-        strokeWidth = 8.toFloat()
-    }
-
-    override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-
-        val points = mutableListOf<Float>()
-        parent.forEach {
-            if (parent.getChildAdapterPosition(it) < state.itemCount - 1) {
-                val bottom = (it.bottom + 16).toFloat()
-                points.add((it.left).toFloat())
-                points.add(bottom)
-                points.add(it.right.toFloat())
-                points.add(bottom)
-            }
-        }
-        c.drawLines(points.toFloatArray(), dividerPaint)
-
-    }
-
-    override fun getItemOffsets(
-        outRect: Rect,
-        view: View,
-        parent: RecyclerView,
-        state: RecyclerView.State
-    ) {
-        outRect.top = 0
-        outRect.bottom = 0
-        outRect.left = 16
-        outRect.right = 16
-    }
-
 }

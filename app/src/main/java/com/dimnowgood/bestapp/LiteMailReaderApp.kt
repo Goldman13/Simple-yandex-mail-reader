@@ -14,7 +14,7 @@ import dagger.android.DaggerApplication
 import timber.log.Timber
 import javax.inject.Inject
 
-class LiteMailReader: DaggerApplication(), Configuration.Provider{
+class LiteMailReaderApp: DaggerApplication(), Configuration.Provider{
 
     @Inject
     lateinit var connectivityManager:ConnectivityManager

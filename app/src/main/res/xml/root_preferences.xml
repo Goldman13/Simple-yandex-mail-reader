@@ -2,16 +2,8 @@
 
         <EditTextPreference
             app:defaultValue="25"
-            app:key="CheckNumberNewMessages"
-            app:title="Check number new messages (max.100)"
-            app:useSimpleSummaryProvider="true" />
-
-        <ListPreference
-            app:defaultValue="reply"
-            app:entries="@array/reply_entries"
-            app:entryValues="@array/reply_values"
-            app:key="reply"
-            app:title="@string/reply_title"
-            app:useSimpleSummaryProvider="true" />
+            app:key="NumberOfCheckMessages"
+            app:title="Number of check messages (max.100)"
+            app:useSimpleSummaryProvider="true"/>
 
 </PreferenceScreen>

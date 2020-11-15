@@ -7,11 +7,6 @@ import javax.inject.Singleton
 
 @Singleton
 class GetNewEmailUseCase @Inject constructor(val repo: Repository){
-
-    suspend fun query(): Result<*> = repo.queryRemoteDataSource()
-    fun queryMails() = repo.queryAllMailsFromLocalDb()
-    suspend fun queryBody(id: Long) = repo.queryBodyMailFromLocalDb(id)
-    suspend fun loadMailBody(id: Long): Result<*> = repo.loadMailBody(id)
-
-
+    suspend fun query(login:String): Result<*> = repo.queryRemoteDataSource(login)
+    fun queryMails(login:String) = repo.queryAllMailsFromLocalDb(login)
 }

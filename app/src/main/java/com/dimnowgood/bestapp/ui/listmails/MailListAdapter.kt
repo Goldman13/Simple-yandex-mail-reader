@@ -1,41 +1,41 @@
 package com.dimnowgood.bestapp.ui.listmails
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Base64
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.webkit.WebView
+import android.view.*
 import android.widget.ImageButton
-import android.widget.TextView
-import androidx.core.content.res.ResourcesCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.core.widget.ImageViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.dimnowgood.bestapp.R
 import com.dimnowgood.bestapp.data.db.MailEntity
-import kotlinx.coroutines.*
-import timber.log.Timber
-import java.text.DateFormat
+import com.dimnowgood.bestapp.databinding.CardMailBinding
+import kotlinx.android.synthetic.main.card_mail.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.zone.ZoneOffsetTransitionRule
-import java.util.*
-import kotlin.coroutines.CoroutineContext
 
 
 class MailListAdapter(
     var list:List<MailEntity>,
-    private val layout:Int,
-    val query: suspend (Long) -> String)
-:RecyclerView.Adapter<MailListViewHolder>(){
+    private val appContext: Context,
+    val query: suspend (Long) -> String,
+    val update: suspend (MailEntity) -> Unit,
+    val delete: suspend (List<MailEntity>) -> Unit
+):RecyclerView.Adapter<MailListAdapter.MailListViewHolder>(){
+
+    private  var listDel = mutableSetOf<MailEntity>()
+    private var actionMode: ActionMode? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MailListViewHolder {
-        val view = LayoutInflater
-            .from(parent.context)
-            .inflate(layout, parent, false)
-
-        return MailListViewHolder(view)
+        return MailListViewHolder(
+            CardMailBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            ).root)
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -44,6 +44,18 @@ class MailListAdapter(
         holder.date.text = SimpleDateFormat("yyyy-M-d H:mm").format(item.data_receiving)
         holder.from.text = item.from
         holder.title.text = item.title
+
+        holder.checkItem.visibility =
+            if(listDel.contains(item)) View.VISIBLE
+            else View.INVISIBLE
+
+        val color =
+            if(item.newMail)
+                ContextCompat.getColor(appContext, R.color.backGroundlistItem_new)
+            else
+                ContextCompat.getColor(appContext, R.color.backGroundlistItem)
+
+        holder.itemView.setBackgroundColor(color)
 
         holder.buttonImage.setOnClickListener {viewButton ->
             holder.webContent.apply {
@@ -56,51 +68,112 @@ class MailListAdapter(
                 }
             }
 
-            Timber.tag("Yandex").d("1")
             CoroutineScope(Dispatchers.Main).launch{
-                Timber.tag("Yandex").d("2")
-               //val result = query(item.id).await()
                 val result = query(item.id)
-                Timber.tag("Yandex").d("5555")
-
-                Timber.tag("Yandex").d("3")
-
                 holder.webContent.apply {
-                    val encodedHtml = Base64.encodeToString("JJJJJJJJJJJJJ".toByteArray(), Base64.NO_PADDING)
-//                        val encodedHtml = Base64.encodeToString(result.toByteArray(), Base64.NO_PADDING)
-                        loadData(encodedHtml, "text/html", "base64")
-                        (viewButton as ImageButton).apply {
-                            setImageResource(R.drawable.open_cardview_bottom_24)
+                    val encodedHtml = Base64.encodeToString(result.toByteArray(), Base64.NO_PADDING)
+                    loadData(encodedHtml, "text/html", "base64")
+                    (viewButton as ImageButton).apply {
+                        setImageResource(R.drawable.open_cardview_bottom_24)
+                    }
+                    visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+    override fun getItemCount(): Int = list.size
+
+    inner class MailListViewHolder(
+        view: View
+    ):RecyclerView.ViewHolder(view),View.OnClickListener,View.OnLongClickListener{
+
+        val binding = CardMailBinding.bind(view)
+
+        init{
+            itemView.setOnClickListener(this)
+            itemView.setOnLongClickListener(this)
+        }
+
+        val checkItem = binding.checkItem
+        val date = binding.dateReceive
+        val from = binding.from
+        val title = binding.mailTitle
+        val buttonImage = binding.buttonExpand
+        val webContent = binding.webView.apply {
+            settings.apply {
+                useWideViewPort = true
+                loadWithOverviewMode = true
+            }
+        }
+
+        override fun onClick(v: View?) {
+            val item = list.get(this.adapterPosition)
+            if(actionMode!=null) {
+                if(listDel.contains(item)){
+                    listDel.remove(item)
+                    v?.checkItem?.visibility = View.INVISIBLE
+                }
+                else{
+                    listDel.add(item)
+                    v?.checkItem?.visibility = View.VISIBLE
+                }
+                actionMode?.title = if (listDel.size == 0) "" else listDel.size.toString()
+            } else {
+                if (item.newMail) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        item.newMail = false
+                        update(item)
+                        v?.setBackgroundColor(
+                            ContextCompat.getColor(appContext, R.color.backGroundlistItem)
+                        )
+                    }
+                }
+            }
+        }
+
+        private val actionModeCallback = object : ActionMode.Callback {
+
+            override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
+                val inflater: MenuInflater = mode.menuInflater
+                inflater.inflate(R.menu.context_menu, menu)
+                return true
+            }
+
+            override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
+                return false
+            }
+
+            override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
+                return when (item.itemId) {
+                    R.id.delItem -> {
+                        CoroutineScope(Dispatchers.Main).launch{
+                            delete(listDel.toList())
+                            mode.finish()
                         }
-                        visibility = View.VISIBLE
+                        true
+                    }
+                    else -> false
                 }
             }
 
-            Timber.tag("Yandex").d("4")
+            override fun onDestroyActionMode(mode: ActionMode) {
+                actionMode = null
+                listDel.clear()
+                this@MailListAdapter.notifyDataSetChanged()
+            }
         }
 
-
-    }
-    override fun getItemCount(): Int = list.size
-}
-
-class MailListViewHolder(view: View):RecyclerView.ViewHolder(view){
-    val date = view.findViewById<TextView>(R.id.date_receive)
-    val from = view.findViewById<TextView>(R.id.from)
-    val title = view.findViewById<TextView>(R.id.mail_title)
-    val webContent = view.findViewById<WebView>(R.id.webView).apply {
-        settings.apply {
-            useWideViewPort = true
-            loadWithOverviewMode = true
+        override fun onLongClick(v: View?): Boolean {
+            when (actionMode) {
+                null -> {
+                    actionMode = v?.startActionMode(actionModeCallback)
+                }
+            }
+            return true
         }
     }
-
-    val buttonImage = view.findViewById<ImageButton>(R.id.button_expand)
-//    val buttonImage = view.findViewById<ImageButton>(R.id.button_expand).setOnClickListener {
-//
-//        webContent.apply {
-//            if(isVisible) visibility = View.GONE
-//            else visibility = View.VISIBLE
-//        }
-//    }
 }
+
+
+
+
