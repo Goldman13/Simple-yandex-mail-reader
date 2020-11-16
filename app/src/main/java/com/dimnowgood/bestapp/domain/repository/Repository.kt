@@ -18,35 +18,35 @@ class Repository @Inject constructor(
     private val mailDao: MailDao,
     private val mailBodyDao: MailBodyDao){
 
-   suspend fun updateLocalDb(mailItem: MailEntity){
+   fun updateLocalDb(mailItem: MailEntity){
         mailDao.update(mailItem)
    }
 
-   suspend fun deleteLocalDb(list: List<MailEntity>){
+   fun deleteLocalDb(list: List<MailEntity>){
         mailDao.complexDelete(list)
    }
 
-    suspend fun queryRemoteDataSource(login:String): Result<*> {
+    fun queryRemoteDataSource(login:String): Result<*> {
         return remoteDataSource.queryMails(login) { list ->
             if(!list.isNullOrEmpty()) addMailsLocalDb(list)
         }
     }
 
-    suspend fun loadMailBody(id: Long, login:String):Result<*>{
+    fun loadMailBody(id: Long, login:String):Result<*>{
         return remoteDataSource.loadMailBody(id,login){ mailBody ->
             addMailBodyLocalDb(mailBody)
         }
     }
 
-    suspend fun checkLoginData(param: List<String>): Result<*> {
+    fun checkLoginData(param: List<String>): Result<*> {
         return remoteDataSource.checkLoginData(param)
     }
 
-    private suspend fun addMailsLocalDb(newMailList: List<MailEntity>) {
+    private fun addMailsLocalDb(newMailList: List<MailEntity>) {
         mailDao.insertMails(newMailList)
     }
 
-    private suspend fun addMailBodyLocalDb(body: MailBodyEntity) {
+    private fun addMailBodyLocalDb(body: MailBodyEntity) {
         mailBodyDao.insert(body)
     }
 
@@ -54,7 +54,7 @@ class Repository @Inject constructor(
         return mailDao.queryAllMails(login)
     }
 
-    suspend fun queryBodyMailFromLocalDb(id: Long, login:String):MailBodyEntity?{
+    fun queryBodyMailFromLocalDb(id: Long, login:String):MailBodyEntity?{
         return mailBodyDao.queryContent(id, login)
     }
 }

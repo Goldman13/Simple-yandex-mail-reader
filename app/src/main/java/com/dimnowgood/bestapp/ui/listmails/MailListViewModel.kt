@@ -13,6 +13,14 @@ import com.dimnowgood.bestapp.domain.usecase.GetMailBodyUseCase
 import com.dimnowgood.bestapp.domain.usecase.GetNewEmailUseCase
 import com.dimnowgood.bestapp.domain.usecase.ModifyMailItemDbUseCase
 import com.dimnowgood.bestapp.util.*
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Maybe
+import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.*
 import timber.log.Timber
 import javax.inject.Inject
@@ -30,6 +38,7 @@ class MailListViewModel @Inject constructor(
     val networkStatus: NetworkStatus
 ) : ViewModel() {
 
+    private val disposable = CompositeDisposable()
     private val login = sharedPref.getString(LOGIN,"")?:""
 
     val _status = MutableLiveData<Result<*>>()
@@ -59,9 +68,9 @@ class MailListViewModel @Inject constructor(
     }
 
     suspend fun delete(list: List<MailEntity>){
-        viewModelScope.async{
-            deleteMailDbUseCase.delete(list)
-        }.await()
+        Completable.create{deleteMailDbUseCase.delete(list)}
+            .subscribeOn(Schedulers.io())
+            .subscribe().addTo(disposable)
     }
 
     suspend fun updateMailDb(mailItem: MailEntity){
@@ -89,4 +98,8 @@ class MailListViewModel @Inject constructor(
     }
 
     fun hasConnect() = networkStatus.isConnectNetwork
+    override fun onCleared() {
+        super.onCleared()
+        disposable.clear()
+    }
 }

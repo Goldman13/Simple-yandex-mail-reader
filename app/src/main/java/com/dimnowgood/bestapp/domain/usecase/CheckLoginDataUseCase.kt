@@ -7,7 +7,7 @@ import javax.inject.Singleton
 
 @Singleton
 class CheckLoginDataUseCase @Inject constructor(val repo: Repository) {
-    suspend fun checkLog(param: List<String>): Result<*> {
+    fun checkLog(param: List<String>): Result<*> {
         return repo.checkLoginData(param)
     }
 }

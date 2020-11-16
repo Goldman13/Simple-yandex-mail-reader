@@ -26,8 +26,8 @@ class YandexMailServerDataSource @Inject constructor(
     private val app: LiteMailReaderApp
 ): MailDataSource {
 
-    override suspend fun queryMails(login: String,
-        handleTitleMailData: suspend (List<MailEntity>) -> Unit
+    override fun queryMails(login: String,
+        handleTitleMailData: (List<MailEntity>) -> Unit
     ): Result<*> {
 
         var store: Store? = null
@@ -84,7 +84,7 @@ class YandexMailServerDataSource @Inject constructor(
         }
     }
 
-    override suspend fun checkLoginData(param: List<String>): Result<*> {
+    override fun checkLoginData(param: List<String>): Result<*> {
 
         var store: Store? = null
 
@@ -99,10 +99,10 @@ class YandexMailServerDataSource @Inject constructor(
         }
     }
 
-    override suspend fun loadMailBody(
+    override fun loadMailBody(
         id: Long,
         login:String,
-        addMailBodyDb: suspend (MailBodyEntity)->Unit
+        addMailBodyDb: (MailBodyEntity)->Unit
     ): Result<*> {
 
         var store: Store? = null

@@ -5,7 +5,7 @@ import com.dimnowgood.bestapp.data.db.MailEntity
 import com.dimnowgood.bestapp.util.Result
 
 interface MailDataSource {
-   suspend fun queryMails(login:String, handleTitleMailData: suspend (List<MailEntity>) -> Unit): Result<*>
-   suspend fun checkLoginData(param:List<String>): Result<*>
-   suspend fun loadMailBody(id: Long,login:String, addMailBodyDb: suspend (MailBodyEntity)->Unit):Result<*>
+   fun queryMails(login:String, handleTitleMailData: (List<MailEntity>) -> Unit): Result<*>
+   fun checkLoginData(param:List<String>): Result<*>
+   fun loadMailBody(id: Long,login:String, addMailBodyDb: (MailBodyEntity)->Unit):Result<*>
 }

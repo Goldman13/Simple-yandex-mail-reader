@@ -8,5 +8,5 @@ import javax.inject.Singleton
 
 @Singleton
 class DeleteMailDbUseCase @Inject constructor(val repo: Repository) {
-    suspend fun delete(list: List<MailEntity>) = repo.deleteLocalDb(list)
+    fun delete(list: List<MailEntity>) = repo.deleteLocalDb(list)
 }
