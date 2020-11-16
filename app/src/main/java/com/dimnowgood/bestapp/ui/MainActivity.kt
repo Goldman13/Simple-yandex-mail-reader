@@ -74,20 +74,10 @@ class MainActivity : DaggerAppCompatActivity() {
         navController.graph = navGraph
     }
 
-    override fun onStop() {
-        super.onStop()
-
-    }
-
     override fun onResume() {
         super.onResume()
-        //WorkManager.getInstance(applicationContext).cancelAllWorkByTag(workMailTag)
+        WorkManager.getInstance(applicationContext).cancelAllWorkByTag(workMailTag)
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
 
     override fun onPause() {
         super.onPause()
@@ -96,22 +86,27 @@ class MainActivity : DaggerAppCompatActivity() {
         }
     }
 
-    private fun runWorker(){
+    fun runWorker(){
 
-        val workRequest = OneTimeWorkRequestBuilder<CheckNewMailWorker>()
+//        val workRequest = OneTimeWorkRequestBuilder<CheckNewMailWorker>()
+//            .addTag(workMailTag)
+//            .build()
+//
+//        WorkManager
+//            .getInstance(applicationContext)
+//            .enqueue(workRequest)
+
+
+        val workRequest = PeriodicWorkRequestBuilder<CheckNewMailWorker>(
+            15,
+            TimeUnit.MINUTES)
             .addTag(workMailTag)
             .build()
 
-//        val workRequest = PeriodicWorkRequestBuilder<CheckNewMailWorker>(
-//            15,
-//            TimeUnit.MINUTES)
-//            .addTag(workMailTag)
-//            .build()
-
-//        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
-//            workMailTag,
-//            ExistingPeriodicWorkPolicy.KEEP,
-//            workRequest
-//        )
+        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
+            workMailTag,
+            ExistingPeriodicWorkPolicy.KEEP,
+            workRequest
+        )
     }
 }

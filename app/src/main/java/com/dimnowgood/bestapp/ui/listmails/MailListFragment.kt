@@ -16,6 +16,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.dimnowgood.bestapp.R
 import com.dimnowgood.bestapp.data.db.MailEntity
 import com.dimnowgood.bestapp.databinding.FragmentMailListBinding
+import com.dimnowgood.bestapp.ui.MainActivity
 import com.dimnowgood.bestapp.util.Status
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.DaggerFragment
@@ -98,6 +99,7 @@ class MailListFragment : DaggerFragment() {
         return when(item.itemId){
             R.id.settings -> {
                 findNavController().navigate(R.id.action_mailListFragment_to_settingsFragment)
+                (activity as MainActivity).runWorker()
                 true
             }
             R.id.logout ->{
