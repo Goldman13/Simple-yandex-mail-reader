@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#F5AD1C</color>
-    <color name="colorPrimaryDark">#00631a</color>
-    <color name="colorAccent">#03DAC5</color>
     <color name="backGroundlistItem">#FFFFFF</color>
     <color name="backGroundlistItem_new">#91ED8E</color>
 </resources>

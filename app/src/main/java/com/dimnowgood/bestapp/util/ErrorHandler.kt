@@ -1,11 +1,7 @@
 package com.dimnowgood.bestapp.util
 
-import android.content.res.Resources
 import com.dimnowgood.bestapp.LiteMailReaderApp
 import com.dimnowgood.bestapp.R
-import java.lang.Exception
-import javax.inject.Inject
-import javax.inject.Singleton
 import javax.mail.AuthenticationFailedException
 
 class ErrorHandler {

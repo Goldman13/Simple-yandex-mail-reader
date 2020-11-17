@@ -1,13 +1,12 @@
 package com.dimnowgood.bestapp.data.data_source
 
 import android.content.SharedPreferences
-import android.content.res.Resources
-import com.dimnowgood.bestapp.util.ErrorHandler
 import com.dimnowgood.bestapp.LiteMailReaderApp
 import com.dimnowgood.bestapp.R
 import com.dimnowgood.bestapp.data.db.MailBodyEntity
 import com.dimnowgood.bestapp.data.db.MailEntity
 import com.dimnowgood.bestapp.domain.model.MailMessage
+import com.dimnowgood.bestapp.util.ErrorHandler
 import com.dimnowgood.bestapp.util.Result
 import com.sun.mail.imap.IMAPFolder
 import javax.inject.Inject

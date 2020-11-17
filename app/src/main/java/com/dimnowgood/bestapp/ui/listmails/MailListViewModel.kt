@@ -2,11 +2,10 @@ package com.dimnowgood.bestapp.ui.listmails
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
-import android.text.Spanned
-import android.view.ViewStructure
-import androidx.core.text.HtmlCompat
-import androidx.lifecycle.*
-import com.dimnowgood.bestapp.data.db.MailBodyEntity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.dimnowgood.bestapp.data.db.MailEntity
 import com.dimnowgood.bestapp.domain.usecase.DeleteMailDbUseCase
 import com.dimnowgood.bestapp.domain.usecase.GetMailBodyUseCase
@@ -15,18 +14,13 @@ import com.dimnowgood.bestapp.domain.usecase.ModifyMailItemDbUseCase
 import com.dimnowgood.bestapp.util.*
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Maybe
-import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.coroutines.*
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
-import kotlin.system.measureTimeMillis
 
 class MailListViewModel @Inject constructor(
     val getEmailsUseCase: GetNewEmailUseCase,

@@ -3,17 +3,10 @@ package com.dimnowgood.bestapp.workers
 import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
-import android.icu.util.TimeZone
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.work.CoroutineWorker
-import androidx.work.ForegroundInfo
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.rxjava3.RxWorker
 import com.dimnowgood.bestapp.R
@@ -21,15 +14,10 @@ import com.dimnowgood.bestapp.util.COMMON_STORE
 import com.dimnowgood.bestapp.util.LAST_TIME_CHECK
 import com.sun.mail.imap.IMAPFolder
 import io.reactivex.rxjava3.core.Single
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.withContext
-import java.lang.Exception
 import java.sql.Date
-import java.time.*
-import java.time.temporal.ChronoField
-import java.util.*
-import javax.inject.Inject
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneId
 import javax.mail.Flags
 import javax.mail.Folder
 import javax.mail.Session
@@ -38,8 +26,6 @@ import javax.mail.search.AndTerm
 import javax.mail.search.ComparisonTerm
 import javax.mail.search.FlagTerm
 import javax.mail.search.ReceivedDateTerm
-import java.util.TimeZone.*
-import javax.inject.Singleton
 
 class CheckNewMailWorker constructor(
     val session:Session,

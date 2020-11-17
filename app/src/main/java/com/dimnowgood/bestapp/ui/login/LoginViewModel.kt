@@ -2,26 +2,21 @@ package com.dimnowgood.bestapp.ui.login
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.dimnowgood.bestapp.LiteMailReaderApp
 import com.dimnowgood.bestapp.domain.usecase.CheckLoginDataUseCase
 import com.dimnowgood.bestapp.util.IS_AUTH
 import com.dimnowgood.bestapp.util.NetworkStatus
 import com.dimnowgood.bestapp.util.Result
 import com.dimnowgood.bestapp.util.Status
-import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.kotlin.Singles
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 

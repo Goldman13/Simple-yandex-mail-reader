@@ -1,10 +1,11 @@
 package com.dimnowgood.bestapp.data.db
 
 import android.os.Parcelable
-import androidx.room.*
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.TypeConverter
 import com.dimnowgood.bestapp.domain.model.MailMessage
 import kotlinx.android.parcel.Parcelize
-import java.time.LocalDateTime
 import java.util.*
 
 @Parcelize
