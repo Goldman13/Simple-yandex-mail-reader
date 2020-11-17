@@ -15,19 +15,19 @@ import dagger.multibindings.IntoMap
 interface ViewModelModule {
 
     @Binds
-    abstract fun bindViewModelFactory(viewModelFactory: ViewModelFactory): ViewModelProvider.Factory
+    fun bindViewModelFactory(viewModelFactory: ViewModelFactory): ViewModelProvider.Factory
 
     @IntoMap
     @Binds
     @ViewModelKey(LoginViewModel::class)
-    abstract fun provideLoginViewModel(LoginViewModel: LoginViewModel): ViewModel
+    fun provideLoginViewModel(LoginViewModel: LoginViewModel): ViewModel
 
     @IntoMap
     @Binds
     @ViewModelKey(MailListViewModel::class)
-    abstract fun provideMailListViewModel(mailListViewModel: MailListViewModel): ViewModel
+    fun provideMailListViewModel(mailListViewModel: MailListViewModel): ViewModel
 
     @Binds
-    abstract fun getMailDataSource(dataSource: YandexMailServerDataSource): MailDataSource
+    fun getMailDataSource(dataSource: YandexMailServerDataSource): MailDataSource
 
 }

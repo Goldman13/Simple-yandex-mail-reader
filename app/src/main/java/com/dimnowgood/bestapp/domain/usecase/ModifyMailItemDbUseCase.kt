@@ -8,5 +8,5 @@ import javax.inject.Singleton
 
 @Singleton
 class ModifyMailItemDbUseCase @Inject constructor(val repo: Repository) {
-    suspend fun updateDb(mailItem: MailEntity) = repo.updateLocalDb(mailItem)
+    fun updateDb(mailItem: MailEntity) = repo.updateLocalDb(mailItem)
 }

@@ -20,6 +20,9 @@ import com.dimnowgood.bestapp.ui.MainActivity
 import com.dimnowgood.bestapp.util.Status
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.DaggerFragment
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.coroutines.*
 import timber.log.Timber
 import javax.inject.Inject
@@ -40,7 +43,7 @@ class MailListFragment : DaggerFragment() {
     ): View? {
         setHasOptionsMenu(true)
         binding = FragmentMailListBinding.inflate(inflater,container,false)
-        binding.setLifecycleOwner(this)
+        binding.lifecycleOwner = this
         return binding.root
     }
 
@@ -99,24 +102,28 @@ class MailListFragment : DaggerFragment() {
         return when(item.itemId){
             R.id.settings -> {
                 findNavController().navigate(R.id.action_mailListFragment_to_settingsFragment)
-                (activity as MainActivity).runWorker()
                 true
             }
             R.id.logout ->{
-                CoroutineScope(Dispatchers.Default).launch{
-                    mailViewModel.backToLoginView()
-                    activity?.let{
-                        val intent = it.intent
-                        it.finish()
-                        it.startActivity(intent)
+                mailViewModel.backToLoginView()
+                    .subscribeOn(Schedulers.io())
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .subscribeBy { result ->
+                        if(result){
+                            activity?.let{
+                                val intent = it.intent
+                                it.finish()
+                                it.startActivity(intent)
+                            }
+                        }
                     }
-                }
                 true
             }
             R.id.item_check -> {
                 if(!mailViewModel.hasConnect())
                     Snackbar.make(binding.root,getString(R.string.connect_error),Snackbar.LENGTH_LONG).show()
-                mailViewModel.getNewMails()
+                else
+                    mailViewModel.getNewMails()
                 true
             }
             else -> false

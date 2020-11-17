@@ -7,6 +7,6 @@ import javax.inject.Singleton
 
 @Singleton
 class GetMailBodyUseCase@Inject constructor(val repo: Repository) {
-    suspend fun queryBodyDb(id: Long, login:String) = repo.queryBodyMailFromLocalDb(id, login)
-    suspend fun loadMailBody(id: Long, login:String): Result<*> = repo.loadMailBody(id, login)
+    fun queryBodyDb(id: Long, login:String) = repo.queryBodyMailFromLocalDb(id, login)
+    fun loadMailBody(id: Long, login:String): Result<*> = repo.loadMailBody(id, login)
 }

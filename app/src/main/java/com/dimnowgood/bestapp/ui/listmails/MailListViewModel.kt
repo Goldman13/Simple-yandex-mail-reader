@@ -17,6 +17,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Maybe
 import io.reactivex.rxjava3.core.Scheduler
+import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
@@ -53,51 +54,59 @@ class MailListViewModel @Inject constructor(
         }
     }
 
-    suspend fun getBodyMail(id: Long):String{
-        return viewModelScope.async(Dispatchers.IO){
-            var body = getMailBodyUseCase.queryBodyDb(id, login)?.content?:""
+    fun getBodyMail(id: Long): Single<String>{
+        return Single.create{
+            var body = getMailBodyUseCase . queryBodyDb (id, login)?.content?:""
             if(body.isEmpty()){
                 val result = getMailBodyUseCase.loadMailBody(id, login)
                 body =
                     if(result.status == Status.SUCCESS)
                         getMailBodyUseCase.queryBodyDb(id, login)?.content?:""
-                    else result.message?:""
+                    else result.message
             }
-            body
-        }.await()
+
+            it.onSuccess(body)
+        }
     }
 
-    suspend fun delete(list: List<MailEntity>){
-        Completable.create{deleteMailDbUseCase.delete(list)}
-            .subscribeOn(Schedulers.io())
-            .subscribe().addTo(disposable)
+    fun delete(list: List<MailEntity>): Completable{
+        return Completable.create{
+            deleteMailDbUseCase.delete(list)
+            it.onComplete()
+        }
     }
 
-    suspend fun updateMailDb(mailItem: MailEntity){
-        viewModelScope.async(){
+    fun updateMailDb(mailItem: MailEntity): Completable{
+        return Completable.create{
             modifyMailItemDbUseCase.updateDb(mailItem)
-        }.await()
+            it.onComplete()
+        }
     }
 
     @SuppressLint("ApplySharedPref")
-    suspend fun backToLoginView(){
-        viewModelScope.async(){
-            sharedPref.edit()
-                .putString(LOGIN, "")
-                .putString(PASSWORD, "")
-                .putBoolean(IS_AUTH, false)
-                .commit()
-        }.await()
+    fun backToLoginView(): Single<Boolean>{
+        return Single.create{
+            it.onSuccess(sharedPref.edit()
+            .putString(LOGIN, "")
+            .putString(PASSWORD, "")
+            .putBoolean(IS_AUTH, false)
+            .commit())}
     }
 
     fun getNewMails() {
         _status.value = Result.loading(null, "")
-        viewModelScope.launch() {
-            _status.value = withContext(Dispatchers.IO){getEmailsUseCase.query(login)}
+        Single.create<Result<*>>{
+            it.onSuccess(getEmailsUseCase.query(login))
         }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy {result ->
+                _status.value = result
+            }.addTo(disposable)
     }
 
     fun hasConnect() = networkStatus.isConnectNetwork
+
     override fun onCleared() {
         super.onCleared()
         disposable.clear()

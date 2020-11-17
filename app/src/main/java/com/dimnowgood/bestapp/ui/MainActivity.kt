@@ -88,17 +88,8 @@ class MainActivity : DaggerAppCompatActivity() {
 
     fun runWorker(){
 
-//        val workRequest = OneTimeWorkRequestBuilder<CheckNewMailWorker>()
-//            .addTag(workMailTag)
-//            .build()
-//
-//        WorkManager
-//            .getInstance(applicationContext)
-//            .enqueue(workRequest)
-
-
         val workRequest = PeriodicWorkRequestBuilder<CheckNewMailWorker>(
-            15,
+            30,
             TimeUnit.MINUTES)
             .addTag(workMailTag)
             .build()

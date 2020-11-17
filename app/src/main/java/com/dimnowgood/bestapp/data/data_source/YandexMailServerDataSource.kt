@@ -134,15 +134,15 @@ class YandexMailServerDataSource @Inject constructor(
 
         try {
             if (mes.isMimeType("text/*")) {
-                return mes.getContent().toString()
+                return mes.content.toString()
             }
 
             if (mes.isMimeType("multipart/alternative")) {
                 // prefer html text over plain text
-                val mp = mes.getContent() as Multipart
+                val mp = mes.content as Multipart
                 var text = ""
 
-                for (i in 0 until mp.getCount()) {
+                for (i in 0 until mp.count) {
                     val bp = mp.getBodyPart(i)
                     if (bp.isMimeType("text/plain")) {
                         if (text == "")
@@ -152,14 +152,14 @@ class YandexMailServerDataSource @Inject constructor(
                         val s = handleMessageBody(bp)
                         return s
                     } else {
-                        return handleMessageBody(bp);
+                        return handleMessageBody(bp)
                     }
                 }
                 return text
             } else if (mes.isMimeType("multipart/*")) {
-                val mp = mes.getContent() as Multipart
+                val mp = mes.content as Multipart
 
-                for (i in 0 until mp.getCount()) {
+                for (i in 0 until mp.count) {
                     val s = handleMessageBody(mp.getBodyPart(i))
                     return s
                 }

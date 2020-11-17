@@ -34,7 +34,7 @@ class LoginFragment:DaggerFragment() {
         (activity as AppCompatActivity).supportActionBar?.hide()
         setHasOptionsMenu(true)
         binding = FragmentLoginBinding.inflate(inflater, container,false)
-        binding.setLifecycleOwner(this)
+        binding.lifecycleOwner = this
         return binding.root
     }
 

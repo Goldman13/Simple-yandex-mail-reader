@@ -11,6 +11,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dimnowgood.bestapp.R
 import com.dimnowgood.bestapp.data.db.MailEntity
 import com.dimnowgood.bestapp.databinding.CardMailBinding
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.card_mail.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,9 +27,9 @@ import java.text.SimpleDateFormat
 class MailListAdapter(
     var list:List<MailEntity>,
     private val appContext: Context,
-    val query: suspend (Long) -> String,
-    val update: suspend (MailEntity) -> Unit,
-    val delete: suspend (List<MailEntity>) -> Unit
+    val query: (Long) -> Single<String>,
+    val update: (MailEntity) -> Completable,
+    val delete: (List<MailEntity>) -> Completable
 ):RecyclerView.Adapter<MailListAdapter.MailListViewHolder>(){
 
     private  var listDel = mutableSetOf<MailEntity>()
@@ -68,19 +74,22 @@ class MailListAdapter(
                 }
             }
 
-            CoroutineScope(Dispatchers.Main).launch{
-                val result = query(item.id)
-                holder.webContent.apply {
-                    val encodedHtml = Base64.encodeToString(result.toByteArray(), Base64.NO_PADDING)
-                    loadData(encodedHtml, "text/html", "base64")
-                    (viewButton as ImageButton).apply {
-                        setImageResource(R.drawable.open_cardview_bottom_24)
+            query(item.id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy {result ->
+                    holder.webContent.apply {
+                        val encodedHtml = Base64.encodeToString(result.toByteArray(), Base64.NO_PADDING)
+                        loadData(encodedHtml, "text/html", "base64")
+                        (viewButton as ImageButton).apply {
+                            setImageResource(R.drawable.open_cardview_bottom_24)
+                        }
+                        visibility = View.VISIBLE
                     }
-                    visibility = View.VISIBLE
                 }
-            }
         }
     }
+
     override fun getItemCount(): Int = list.size
 
     inner class MailListViewHolder(
@@ -120,13 +129,15 @@ class MailListAdapter(
                 actionMode?.title = if (listDel.size == 0) "" else listDel.size.toString()
             } else {
                 if (item.newMail) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        item.newMail = false
-                        update(item)
-                        v?.setBackgroundColor(
-                            ContextCompat.getColor(appContext, R.color.backGroundlistItem)
-                        )
-                    }
+                    item.newMail = false
+                    update(item)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeBy {
+                            v?.setBackgroundColor(
+                                ContextCompat.getColor(appContext, R.color.backGroundlistItem)
+                            )
+                        }
                 }
             }
         }
@@ -146,10 +157,12 @@ class MailListAdapter(
             override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
                 return when (item.itemId) {
                     R.id.delItem -> {
-                        CoroutineScope(Dispatchers.Main).launch{
-                            delete(listDel.toList())
-                            mode.finish()
-                        }
+                        delete(listDel.toList())
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribeBy{
+                                mode.finish()
+                            }
                         true
                     }
                     else -> false

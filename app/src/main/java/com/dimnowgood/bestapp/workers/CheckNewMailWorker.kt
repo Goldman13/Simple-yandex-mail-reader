@@ -13,11 +13,14 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
+import androidx.work.Worker
 import androidx.work.WorkerParameters
+import androidx.work.rxjava3.RxWorker
 import com.dimnowgood.bestapp.R
 import com.dimnowgood.bestapp.util.COMMON_STORE
 import com.dimnowgood.bestapp.util.LAST_TIME_CHECK
 import com.sun.mail.imap.IMAPFolder
+import io.reactivex.rxjava3.core.Single
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
@@ -42,45 +45,55 @@ class CheckNewMailWorker constructor(
     val session:Session,
     context: Context,
     workerParams: WorkerParameters
-): CoroutineWorker(context, workerParams){
+): RxWorker(context,workerParams){
 
-    override suspend fun doWork(): Result {
-        val appCommonStore = applicationContext.getSharedPreferences(COMMON_STORE,Context.MODE_PRIVATE)
-        var store: Store? = null
-        var inputFolder: IMAPFolder? = null
+    override fun createWork(): Single<Result> {
 
-        try {
-            store = session.getStore("imaps").also{it.connect()}
-            inputFolder = store.getFolder("INBOX") as IMAPFolder
-            inputFolder.open(Folder.READ_ONLY)
+        return Single.create {
+            val appCommonStore =
+                applicationContext.getSharedPreferences(COMMON_STORE, Context.MODE_PRIVATE)
+            var store: Store? = null
+            var inputFolder: IMAPFolder? = null
 
-            val currentVolumeNewMessages = inputFolder.search(AndTerm(
-                FlagTerm(Flags(Flags.Flag.SEEN), false),
-                ReceivedDateTerm(
-                    ComparisonTerm.GE,
-                    Date(appCommonStore.getLong(
-                        LAST_TIME_CHECK,
-                        LocalDate.now().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())))
-            )).size
+            try {
+                store = session.getStore("imaps").also { it.connect() }
+                inputFolder = store.getFolder("INBOX") as IMAPFolder
+                inputFolder.open(Folder.READ_ONLY)
 
-            if( currentVolumeNewMessages>0){
-                NotificationManagerCompat.from(applicationContext).also{
-                    createNotificationChannel(it)
-                    it.notify(NOTIFICATION_ID, createNotification(currentVolumeNewMessages))
+                val currentVolumeNewMessages = inputFolder.search(
+                    AndTerm(
+                        FlagTerm(Flags(Flags.Flag.SEEN), false),
+                        ReceivedDateTerm(
+                            ComparisonTerm.GE,
+                            Date(
+                                appCommonStore.getLong(
+                                    LAST_TIME_CHECK,
+                                    LocalDate.now().atStartOfDay().atZone(ZoneId.systemDefault())
+                                        .toInstant().toEpochMilli()
+                                )
+                            )
+                        )
+                    )
+                ).size
+
+                if (currentVolumeNewMessages > 0) {
+                    NotificationManagerCompat.from(applicationContext).also {
+                        createNotificationChannel(it)
+                        it.notify(NOTIFICATION_ID, createNotification(currentVolumeNewMessages))
+                    }
                 }
-            }
 
-            return Result.success()
-        }
-        catch (e:Exception){
-            return Result.failure()
-        }
-        finally {
-            appCommonStore.edit().putLong(
-                LAST_TIME_CHECK,
-                LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).apply()
-            inputFolder?.close()
-            store?.close()
+                Result.success()
+            } catch (e: Exception) {
+                Result.failure()
+            } finally {
+                appCommonStore.edit().putLong(
+                    LAST_TIME_CHECK,
+                    LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                ).apply()
+                inputFolder?.close()
+                store?.close()
+            }
         }
     }
 
