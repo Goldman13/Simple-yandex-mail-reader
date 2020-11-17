@@ -1,18 +1,12 @@
 <resources>
     <string name="app_name">Lite mail reader</string>
-
     <!--Error messages    -->
     <string name="connect_error">Connection is missing</string>
     <string name="messages_miss">The message is missing on the server</string>
 
-
-
     <!--Common mail events-->
     <string name="empty_mailbox">Empty mailbox</string>
 
-    <!-- Messages Preferences -->
-
-    <!-- Sync Preferences -->
     <!-- Strings related to login -->
     <string name="login_failed">"Login failed"</string>
 </resources>
