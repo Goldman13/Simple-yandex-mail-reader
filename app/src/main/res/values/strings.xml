@@ -1,13 +1,11 @@
 <resources>
     <string name="app_name">Lite mail reader</string>
-    <string name="notification_title">TRRRRRR</string>
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>
 
     <!--Error messages    -->
     <string name="connect_error">Connection is missing</string>
     <string name="messages_miss">The message is missing on the server</string>
-
 
 
     <!--Common mail events-->
