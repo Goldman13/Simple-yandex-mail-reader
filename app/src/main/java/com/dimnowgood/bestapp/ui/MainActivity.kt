@@ -22,15 +22,18 @@ import javax.inject.Named
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    private var _binding: ActivityMainBinding? = null
+    private val binding get() = _binding!!
+
     @Inject
     @MailModule.EncryptSharedPref
     lateinit var sharedPref: SharedPreferences
     private val workMailTag = "com.dimnowgood.bestapp.workMail"
-    private lateinit var binding: ActivityMainBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setAppBarVisible(true)
