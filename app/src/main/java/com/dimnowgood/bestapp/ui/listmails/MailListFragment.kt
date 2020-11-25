@@ -2,6 +2,7 @@ package com.dimnowgood.bestapp.ui.listmails
 
 import android.os.Bundle
 import android.view.*
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -10,18 +11,16 @@ import com.dimnowgood.bestapp.data.db.MailEntity
 import com.dimnowgood.bestapp.databinding.FragmentMailListBinding
 import com.dimnowgood.bestapp.util.Status
 import com.google.android.material.snackbar.Snackbar
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
-class MailListFragment : DaggerFragment() {
+@AndroidEntryPoint
+class MailListFragment : Fragment() {
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    val mailViewModel: MailListViewModel  by viewModels{
-        viewModelFactory
-    }
+    val mailViewModel: MailListViewModel  by viewModels()
 
     private lateinit var binding: FragmentMailListBinding
     private var commonList = emptyList<MailEntity>()
@@ -29,7 +28,7 @@ class MailListFragment : DaggerFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         setHasOptionsMenu(true)
         binding = FragmentMailListBinding.inflate(inflater,container,false)
         binding.lifecycleOwner = this

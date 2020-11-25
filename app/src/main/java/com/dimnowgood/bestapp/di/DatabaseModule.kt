@@ -1,5 +1,7 @@
 package com.dimnowgood.bestapp.di
 
+import android.app.Application
+import android.content.Context
 import androidx.room.Room
 import com.dimnowgood.bestapp.LiteMailReaderApp
 import com.dimnowgood.bestapp.data.db.MailBodyDao
@@ -7,28 +9,29 @@ import com.dimnowgood.bestapp.data.db.MailDao
 import com.dimnowgood.bestapp.data.db.MailDataBase
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Singleton
 
 @Module
-class DatabaseModule {
+@InstallIn(ApplicationComponent::class)
+object DatabaseModule {
 
-    @Singleton
     @Provides
-    fun provideDatabase(app: LiteMailReaderApp): MailDataBase {
+    fun provideDatabase(@ApplicationContext appContext: Context): MailDataBase {
         return Room.databaseBuilder(
-            app.applicationContext,
+            appContext,
             MailDataBase::class.java,
             "MailDataBase-DB"
         ).build()
     }
 
-    @Singleton
     @Provides
     fun provideMailDao(db: MailDataBase): MailDao{
         return db.mailDao()
     }
 
-    @Singleton
     @Provides
     fun provideMailBodyDao(db: MailDataBase): MailBodyDao{
         return db.mailBodyDao()

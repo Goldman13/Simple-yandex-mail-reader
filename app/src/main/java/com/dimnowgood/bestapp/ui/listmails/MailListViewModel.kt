@@ -2,11 +2,11 @@ package com.dimnowgood.bestapp.ui.listmails
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.hilt.Assisted
+import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.*
 import com.dimnowgood.bestapp.data.db.MailEntity
+import com.dimnowgood.bestapp.di.MailModule
 import com.dimnowgood.bestapp.domain.usecase.DeleteMailDbUseCase
 import com.dimnowgood.bestapp.domain.usecase.GetMailBodyUseCase
 import com.dimnowgood.bestapp.domain.usecase.GetNewEmailUseCase
@@ -22,15 +22,17 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 import javax.inject.Named
 
-class MailListViewModel @Inject constructor(
+class MailListViewModel @ViewModelInject constructor(
     val getEmailsUseCase: GetNewEmailUseCase,
     val getMailBodyUseCase: GetMailBodyUseCase,
     val modifyMailItemDbUseCase: ModifyMailItemDbUseCase,
     val deleteMailDbUseCase: DeleteMailDbUseCase,
 
-    @Named("Encrypt")
+    @MailModule.EncryptSharedPref
     val sharedPref: SharedPreferences,
-    val networkStatus: NetworkStatus
+    val networkStatus: NetworkStatus,
+    @Assisted private val savedStateHandle: SavedStateHandle
+
 ) : ViewModel() {
 
     private val disposable = CompositeDisposable()

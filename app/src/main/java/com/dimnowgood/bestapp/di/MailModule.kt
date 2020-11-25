@@ -13,24 +13,34 @@ import com.dimnowgood.bestapp.util.LOGIN
 import com.dimnowgood.bestapp.util.PASSWORD
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.Properties
 import javax.inject.Named
+import javax.inject.Qualifier
 import javax.inject.Singleton
 import javax.mail.Authenticator
 import javax.mail.PasswordAuthentication
 import javax.mail.Session
 
 @Module
-class MailModule {
+@InstallIn(ApplicationComponent::class)
+object MailModule {
 
-    @Singleton
+    @Qualifier
+    annotation class EncryptSharedPref
+
+    @Qualifier
+    annotation class SettingsSharedPref
+
+
     @Provides
-    fun provide_ConnectivityManager(app:LiteMailReaderApp): ConnectivityManager{
-        return app.applicationContext
+    fun provide_ConnectivityManager(@ApplicationContext appContext:Context): ConnectivityManager{
+        return appContext
             .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     }
 
-    @Singleton
     @Provides
     fun provide_NetworkRequest(): NetworkRequest{
         return NetworkRequest.Builder()
@@ -38,29 +48,28 @@ class MailModule {
             .build()
     }
 
-    @Singleton
     @Provides
-    @Named("Encrypt")
-    fun provide_encryptSharedPref(app: LiteMailReaderApp): SharedPreferences{
+    @EncryptSharedPref
+    fun provide_encryptSharedPref(@ApplicationContext appContext:Context): SharedPreferences{
         return EncryptedSharedPreferences.create(
-            app,
+            appContext,
             "auth_pref",
-            MasterKey.Builder(app.applicationContext).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build(),
+            MasterKey.Builder(appContext).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build(),
             EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
             EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
         )
     }
 
-    @Singleton
+
     @Provides
-    @Named("Settings")
-    fun provide_settingSharedPref(app: LiteMailReaderApp): SharedPreferences{
-       return PreferenceManager.getDefaultSharedPreferences(app.applicationContext)
+    @SettingsSharedPref
+    fun provide_settingSharedPref(@ApplicationContext appContext:Context): SharedPreferences{
+       return PreferenceManager.getDefaultSharedPreferences(appContext)
     }
 
-    @Singleton
+
     @Provides
-    fun provide_YandexMailSession(@Named("Encrypt") sharPref: SharedPreferences): Session {
+    fun provide_YandexMailSession(@EncryptSharedPref sharPref: SharedPreferences): Session {
 
         val props = Properties().apply {
             setProperty("mail.imaps.host", "imap.yandex.ru")

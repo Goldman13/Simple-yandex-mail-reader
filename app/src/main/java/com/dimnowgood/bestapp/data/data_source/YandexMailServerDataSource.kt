@@ -1,10 +1,12 @@
 package com.dimnowgood.bestapp.data.data_source
 
+import android.app.Application
 import android.content.SharedPreferences
 import com.dimnowgood.bestapp.LiteMailReaderApp
 import com.dimnowgood.bestapp.R
 import com.dimnowgood.bestapp.data.db.MailBodyEntity
 import com.dimnowgood.bestapp.data.db.MailEntity
+import com.dimnowgood.bestapp.di.MailModule
 import com.dimnowgood.bestapp.domain.model.MailMessage
 import com.dimnowgood.bestapp.util.ErrorHandler
 import com.dimnowgood.bestapp.util.Result
@@ -18,11 +20,11 @@ import javax.mail.internet.InternetAddress
 @Singleton
 class YandexMailServerDataSource @Inject constructor(
     private val session: Session,
-    @Named("Settings")
+    @MailModule.SettingsSharedPref
     private val settingPref: SharedPreferences,
-    @Named("Encrypt")
+    @MailModule.EncryptSharedPref
     private val loginPref: SharedPreferences,
-    private val app: LiteMailReaderApp
+    private val app: Application
 ): MailDataSource {
 
     override fun queryMails(login: String,

@@ -17,7 +17,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             editText.inputType = InputType.TYPE_CLASS_NUMBER
         }
         
-        checkNumber?.setOnPreferenceChangeListener { preference, newValue ->
+        checkNumber?.setOnPreferenceChangeListener { _, newValue ->
            newValue.toString()[0] != '0' && newValue.toString().toInt()<=100
         }
     }

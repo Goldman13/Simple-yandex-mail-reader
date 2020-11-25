@@ -5,29 +5,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.dimnowgood.bestapp.R
 import com.dimnowgood.bestapp.databinding.FragmentLoginBinding
 import com.dimnowgood.bestapp.util.Status
 import com.google.android.material.snackbar.Snackbar
-import dagger.android.support.DaggerFragment
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-class LoginFragment:DaggerFragment() {
+@AndroidEntryPoint
+class LoginFragment:Fragment() {
 
     lateinit var binding:FragmentLoginBinding
-    @Inject lateinit var viewModelFactory:  ViewModelProvider.Factory
-
-    val loginViewModel: LoginViewModel by viewModels {
-        viewModelFactory
-    }
+    val loginViewModel: LoginViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         (activity as AppCompatActivity).supportActionBar?.hide()
         setHasOptionsMenu(true)

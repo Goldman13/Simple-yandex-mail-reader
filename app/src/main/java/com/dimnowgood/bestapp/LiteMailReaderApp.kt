@@ -1,20 +1,21 @@
 package com.dimnowgood.bestapp
 
 import android.app.Activity
+import android.app.Application
 import android.net.ConnectivityManager
 import android.net.NetworkRequest
 import android.os.Bundle
+import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import com.dimnowgood.bestapp.di.DaggerAppComponent
 import com.dimnowgood.bestapp.util.NetworkStatus
 import com.dimnowgood.bestapp.workers.AppWorkerFactories
 import com.facebook.stetho.Stetho
-import dagger.android.AndroidInjector
-import dagger.android.DaggerApplication
+import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 import javax.inject.Inject
 
-class LiteMailReaderApp: DaggerApplication(), Configuration.Provider{
+@HiltAndroidApp
+class LiteMailReaderApp: Application(), Configuration.Provider{
 
     @Inject
     lateinit var connectivityManager:ConnectivityManager
@@ -23,11 +24,7 @@ class LiteMailReaderApp: DaggerApplication(), Configuration.Provider{
     @Inject
     lateinit var networkStatus: NetworkStatus
     @Inject
-    lateinit var appWorkerFactory: AppWorkerFactories
-
-    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        return DaggerAppComponent.factory().create(this)
-    }
+    lateinit var workerFactory: HiltWorkerFactory
 
 
     override fun onCreate() {
@@ -77,7 +74,7 @@ class LiteMailReaderApp: DaggerApplication(), Configuration.Provider{
     override fun getWorkManagerConfiguration(): Configuration {
        return Configuration.Builder()
             .setMinimumLoggingLevel(android.util.Log.INFO)
-            .setWorkerFactory(appWorkerFactory)
+            .setWorkerFactory(workerFactory)
             .build()
     }
 }

@@ -7,6 +7,8 @@ import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.hilt.Assisted
+import androidx.hilt.work.WorkerInject
 import androidx.work.WorkerParameters
 import androidx.work.rxjava3.RxWorker
 import com.dimnowgood.bestapp.R
@@ -27,10 +29,10 @@ import javax.mail.search.ComparisonTerm
 import javax.mail.search.FlagTerm
 import javax.mail.search.ReceivedDateTerm
 
-class CheckNewMailWorker constructor(
+class CheckNewMailWorker @WorkerInject constructor(
     val session:Session,
-    context: Context,
-    workerParams: WorkerParameters
+    @Assisted context: Context,
+    @Assisted workerParams: WorkerParameters
 ): RxWorker(context,workerParams){
 
     override fun createWork(): Single<Result> {

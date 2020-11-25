@@ -2,6 +2,7 @@ package com.dimnowgood.bestapp.ui
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
@@ -10,17 +11,19 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.dimnowgood.bestapp.R
 import com.dimnowgood.bestapp.databinding.ActivityMainBinding
+import com.dimnowgood.bestapp.di.MailModule
 import com.dimnowgood.bestapp.util.IS_AUTH
 import com.dimnowgood.bestapp.workers.CheckNewMailWorker
-import dagger.android.support.DaggerAppCompatActivity
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Named
 
-class MainActivity : DaggerAppCompatActivity() {
+@AndroidEntryPoint
+class MainActivity : AppCompatActivity() {
 
     @Inject
-    @Named("Encrypt")
+    @MailModule.EncryptSharedPref
     lateinit var sharedPref: SharedPreferences
     private val workMailTag = "com.dimnowgood.bestapp.workMail"
     private lateinit var binding: ActivityMainBinding

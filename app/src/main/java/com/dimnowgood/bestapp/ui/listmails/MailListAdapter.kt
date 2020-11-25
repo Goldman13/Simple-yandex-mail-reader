@@ -16,7 +16,6 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.android.synthetic.main.card_mail.view.*
 import java.text.SimpleDateFormat
 
 
@@ -32,12 +31,11 @@ class MailListAdapter(
     private var actionMode: ActionMode? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MailListViewHolder {
-        return MailListViewHolder(
-            CardMailBinding.inflate(
+       val binding = CardMailBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
-                false
-            ).root)
+                false)
+        return MailListViewHolder(binding.root)
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -113,14 +111,15 @@ class MailListAdapter(
 
         override fun onClick(v: View?) {
             val item = list.get(this.adapterPosition)
+            val binding = CardMailBinding.bind(v!!)
             if(actionMode!=null) {
                 if(listDel.contains(item)){
                     listDel.remove(item)
-                    v?.checkItem?.visibility = View.INVISIBLE
+                    binding.checkItem.visibility = View.INVISIBLE
                 }
                 else{
                     listDel.add(item)
-                    v?.checkItem?.visibility = View.VISIBLE
+                    binding.checkItem.visibility = View.VISIBLE
                 }
                 actionMode?.title = if (listDel.size == 0) "" else listDel.size.toString()
             } else {
@@ -130,7 +129,7 @@ class MailListAdapter(
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeBy {
-                            v?.setBackgroundColor(
+                            binding.checkItem.setBackgroundColor(
                                 ContextCompat.getColor(appContext, R.color.backGroundlistItem)
                             )
                         }
