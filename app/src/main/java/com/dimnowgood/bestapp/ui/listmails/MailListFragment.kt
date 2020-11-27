@@ -37,6 +37,8 @@ class MailListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+
+
         binding.viewModel = mailViewModel
         val mailAdapter = MailListAdapter(
             commonList,
@@ -56,11 +58,6 @@ class MailListFragment : Fragment() {
             commonList = it
 
             binding.recyclerViewMail.adapter?.apply {
-                (this as MailListAdapter).list = commonList
-                notifyDataSetChanged()
-            }
-
-            binding.viewPager.adapter?.apply {
                 (this as MailListAdapter).list = commonList
                 notifyDataSetChanged()
             }
