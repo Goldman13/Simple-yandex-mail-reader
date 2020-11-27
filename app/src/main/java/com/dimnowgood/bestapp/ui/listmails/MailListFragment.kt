@@ -37,7 +37,7 @@ class MailListFragment : DaggerFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         setHasOptionsMenu(true)
         binding = FragmentMailListBinding.inflate(inflater,container,false)
         binding.setLifecycleOwner(this)
@@ -65,11 +65,6 @@ class MailListFragment : DaggerFragment() {
             commonList = it
 
             binding.recyclerViewMail.adapter?.apply {
-                (this as MailListAdapter).list = commonList
-                notifyDataSetChanged()
-            }
-
-            binding.viewPager.adapter?.apply {
                 (this as MailListAdapter).list = commonList
                 notifyDataSetChanged()
             }
