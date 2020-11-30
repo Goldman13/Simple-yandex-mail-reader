@@ -29,7 +29,7 @@ class MailListFragment : DaggerFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         setHasOptionsMenu(true)
         binding = FragmentMailListBinding.inflate(inflater,container,false)
         binding.lifecycleOwner = this

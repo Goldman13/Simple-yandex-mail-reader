@@ -80,17 +80,17 @@ class MailListViewModel @Inject constructor(
     @SuppressLint("ApplySharedPref")
     fun backToLoginView(): Single<Boolean>{
         return Single.create{
-            it.onSuccess(sharedPref.edit()
+            sharedPref.edit()
             .putString(LOGIN, "")
             .putString(PASSWORD, "")
             .putBoolean(IS_AUTH, false)
-            .commit())}
+            .commit()}
     }
 
     fun getNewMails() {
         _status.value = Result.loading(null, "")
         Single.create<Result<*>>{
-            it.onSuccess(getEmailsUseCase.query(login))
+            getEmailsUseCase.query(login)
         }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

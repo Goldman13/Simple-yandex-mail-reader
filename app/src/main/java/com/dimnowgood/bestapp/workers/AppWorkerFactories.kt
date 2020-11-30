@@ -31,5 +31,4 @@ class MailWorkerFactory(val session:Session):WorkerFactory(){
            else -> null
         }
     }
-
 }
