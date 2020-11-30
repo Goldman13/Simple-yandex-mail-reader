@@ -1,18 +1,10 @@
 package com.dimnowgood.bestapp.ui.listmails
 
-import android.content.res.Configuration
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Rect
 import android.os.Bundle
 import android.view.*
-import androidx.core.view.forEach
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
 import com.dimnowgood.bestapp.R
 import com.dimnowgood.bestapp.data.db.MailEntity
 import com.dimnowgood.bestapp.databinding.FragmentMailListBinding
@@ -20,8 +12,9 @@ import com.dimnowgood.bestapp.ui.MainActivity
 import com.dimnowgood.bestapp.util.Status
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.DaggerFragment
-import kotlinx.coroutines.*
-import timber.log.Timber
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MailListFragment : DaggerFragment() {
@@ -40,7 +33,7 @@ class MailListFragment : DaggerFragment() {
     ): View {
         setHasOptionsMenu(true)
         binding = FragmentMailListBinding.inflate(inflater,container,false)
-        binding.setLifecycleOwner(this)
+        binding.lifecycleOwner = this
         return binding.root
     }
 

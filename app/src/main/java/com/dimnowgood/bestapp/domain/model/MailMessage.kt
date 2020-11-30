@@ -1,6 +1,5 @@
 package com.dimnowgood.bestapp.domain.model
 
-import java.time.LocalDateTime
 import java.util.*
 
 data class MailMessage(

@@ -2,22 +2,19 @@ package com.dimnowgood.bestapp.ui.listmails
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
-import android.text.Spanned
-import android.view.ViewStructure
-import androidx.core.text.HtmlCompat
 import androidx.lifecycle.*
-import com.dimnowgood.bestapp.data.db.MailBodyEntity
 import com.dimnowgood.bestapp.data.db.MailEntity
 import com.dimnowgood.bestapp.domain.usecase.DeleteMailDbUseCase
 import com.dimnowgood.bestapp.domain.usecase.GetMailBodyUseCase
 import com.dimnowgood.bestapp.domain.usecase.GetNewEmailUseCase
 import com.dimnowgood.bestapp.domain.usecase.ModifyMailItemDbUseCase
 import com.dimnowgood.bestapp.util.*
-import kotlinx.coroutines.*
-import timber.log.Timber
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Named
-import kotlin.system.measureTimeMillis
 
 class MailListViewModel @Inject constructor(
     val getEmailsUseCase: GetNewEmailUseCase,
@@ -52,7 +49,7 @@ class MailListViewModel @Inject constructor(
                 body =
                     if(result.status == Status.SUCCESS)
                         getMailBodyUseCase.queryBodyDb(id, login)?.content?:""
-                    else result.message?:""
+                    else result.message
             }
             body
         }.await()
@@ -65,14 +62,14 @@ class MailListViewModel @Inject constructor(
     }
 
     suspend fun updateMailDb(mailItem: MailEntity){
-        viewModelScope.async(){
+        viewModelScope.async {
             modifyMailItemDbUseCase.updateDb(mailItem)
         }.await()
     }
 
     @SuppressLint("ApplySharedPref")
     suspend fun backToLoginView(){
-        viewModelScope.async(){
+        viewModelScope.async {
             sharedPref.edit()
                 .putString(LOGIN, "")
                 .putString(PASSWORD, "")
@@ -83,7 +80,7 @@ class MailListViewModel @Inject constructor(
 
     fun getNewMails() {
         _status.value = Result.loading(null, "")
-        viewModelScope.launch() {
+        viewModelScope.launch {
             _status.value = withContext(Dispatchers.IO){getEmailsUseCase.query(login)}
         }
     }

@@ -1,15 +1,13 @@
 package com.dimnowgood.bestapp.domain.repository
 
 import androidx.lifecycle.LiveData
-import androidx.room.Transaction
 import com.dimnowgood.bestapp.data.data_source.YandexMailServerDataSource
 import com.dimnowgood.bestapp.data.db.MailBodyDao
 import com.dimnowgood.bestapp.data.db.MailBodyEntity
 import com.dimnowgood.bestapp.data.db.MailDao
 import com.dimnowgood.bestapp.data.db.MailEntity
-import com.dimnowgood.bestapp.util.Status
-import javax.inject.Inject
 import com.dimnowgood.bestapp.util.Result
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton

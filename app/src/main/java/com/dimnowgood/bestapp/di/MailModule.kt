@@ -60,7 +60,7 @@ class MailModule {
 
     @Singleton
     @Provides
-    fun provide_YandexMailSession(@Named("Encrypt") sharPref: SharedPreferences): Session {
+    fun provide_YandexMailSessionImap(@Named("Encrypt") sharPref: SharedPreferences): Session {
 
         val props = Properties().apply {
             setProperty("mail.imaps.host", "imap.yandex.ru")

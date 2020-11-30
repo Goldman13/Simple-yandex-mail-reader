@@ -1,7 +1,5 @@
 package com.dimnowgood.bestapp.util
 
-import java.net.PasswordAuthentication
-
 const val COMMON_STORE = "common"
 const val IS_AUTH = "isAuth"
 const val LOGIN = "login"

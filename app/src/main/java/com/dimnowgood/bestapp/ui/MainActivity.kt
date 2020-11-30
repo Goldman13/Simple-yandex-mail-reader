@@ -1,27 +1,17 @@
 package com.dimnowgood.bestapp.ui
 
-import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI.setupWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.dimnowgood.bestapp.R
 import com.dimnowgood.bestapp.databinding.ActivityMainBinding
 import com.dimnowgood.bestapp.util.IS_AUTH
 import com.dimnowgood.bestapp.workers.CheckNewMailWorker
-import com.google.android.material.appbar.CollapsingToolbarLayout
-import dagger.android.DaggerActivity
 import dagger.android.support.DaggerAppCompatActivity
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -87,16 +77,6 @@ class MainActivity : DaggerAppCompatActivity() {
     }
 
     fun runWorker(){
-
-//        val workRequest = OneTimeWorkRequestBuilder<CheckNewMailWorker>()
-//            .addTag(workMailTag)
-//            .build()
-//
-//        WorkManager
-//            .getInstance(applicationContext)
-//            .enqueue(workRequest)
-
-
         val workRequest = PeriodicWorkRequestBuilder<CheckNewMailWorker>(
             15,
             TimeUnit.MINUTES)

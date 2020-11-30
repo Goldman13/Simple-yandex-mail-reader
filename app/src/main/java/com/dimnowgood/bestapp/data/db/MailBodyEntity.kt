@@ -2,7 +2,6 @@ package com.dimnowgood.bestapp.data.db
 
 import androidx.room.Entity
 import androidx.room.Ignore
-import androidx.room.PrimaryKey
 
 @Entity(primaryKeys = arrayOf("id", "login"))
 data class MailBodyEntity(
